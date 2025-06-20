@@ -18,7 +18,7 @@ To use Stash, you must configure Comfy with the correct Stash URL and API Key.
 
 In ComfyUI, click the lower-left "gear" to open its settings. On the left, click the **Stash** section which will reveal settings for **Stash API**.
 
-You must copy **API Key** from your Stash security page. For example, if Stash is on your local computer, the security page is at (http://localhost:9999/settings?tab=security)(http://localhost:9999/settings?tab=security). (If not, correct the hostname of that URL.) Paste the entire API key into ComfyUI.
+You must copy the **API Key** from your Stash security page. For example, if Stash is on your local computer, the security page is at [http://localhost:9999/settings?tab=security](http://localhost:9999/settings?tab=security). (If not, correct the hostname of that URL.) Paste the entire API key into ComfyUI.
 
 The **API URL** may already be correct if Stash is on your local computer. If not, correct the hostname (and possibly port) but remember to keep the `/graphql` path.
 
