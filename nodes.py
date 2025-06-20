@@ -75,10 +75,6 @@ class StashImage:
         return {
             'required': {
                 'stash': ('STASH', {'tooltip': 'A Stash server connection'}),
-                'offset': ('INT', {
-                    'default': 0,
-                    'tooltip': 'Offset to use if the query returns more than one image (0 is the first image)',
-                }),
             },
             'optional': {
                 'id_or_url': ('STRING', {
@@ -94,6 +90,10 @@ class StashImage:
                     'tooltip': 'One or more tags associated with the image, comma-separated',
                 }),
                 # TODO: Maybe just say the name of your Stash saved search and it can pull that and DTRT.
+                'offset': ('INT', {
+                    'default': 0,
+                    'tooltip': 'Offset to use if the query returns more than one image (0 is the first image)',
+                }),
             }
         }
 
