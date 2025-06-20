@@ -3,7 +3,6 @@
 ComfyUI-Stash provides nodes for [ComfyUI][comfyui] to access content within [Stash][stash], the organizer for *gentlemens' special-interest content*.
 
 ![Image by Tag](./doc/image-by-tag.png)
-![Image by Name](./doc/image-by-name.png)
 
 If you have Stash, these nodes let you easily use Stash content in your Comfy work.
 
