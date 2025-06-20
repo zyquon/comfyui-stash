@@ -7,6 +7,8 @@ from .base_client import BaseClient
 from .base_model import UNSET, UnsetType
 from .images_by_ids import ImagesByIds
 from .images_by_search import ImagesBySearch
+from .images_by_tag_ids import ImagesByTagIds
+from .tags_by_regex import TagsByRegex
 from .version import Version
 
 
@@ -56,6 +58,10 @@ class Stash(BaseClient):
                 thumbnail
                 preview
               }
+              tags {
+                id
+                name
+              }
               visual_files {
                 __typename
                 ... on ImageFile {
@@ -100,6 +106,10 @@ class Stash(BaseClient):
                 thumbnail
                 preview
               }
+              tags {
+                id
+                name
+              }
               visual_files {
                 __typename
                 ... on ImageFile {
@@ -123,3 +133,76 @@ class Stash(BaseClient):
         )
         data = self.get_data(response)
         return ImagesBySearch.model_validate(data)
+
+    def images_by_tag_ids(
+        self, ids: Union[Optional[List[str]], UnsetType] = UNSET, **kwargs: Any
+    ) -> ImagesByTagIds:
+        query = gql(
+            """
+            query ImagesByTagIds($ids: [ID!]) {
+              findImages(image_filter: {tags: {modifier: INCLUDES, value: $ids}}) {
+                images {
+                  ...Img
+                }
+              }
+            }
+
+            fragment Img on Image {
+              id
+              urls
+              title
+              paths {
+                image
+                thumbnail
+                preview
+              }
+              tags {
+                id
+                name
+              }
+              visual_files {
+                __typename
+                ... on ImageFile {
+                  id
+                  path
+                  size
+                  width
+                  height
+                  fingerprints {
+                    type
+                    value
+                  }
+                }
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"ids": ids}
+        response = self.execute(
+            query=query, operation_name="ImagesByTagIds", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return ImagesByTagIds.model_validate(data)
+
+    def tags_by_regex(self, regex: str, **kwargs: Any) -> TagsByRegex:
+        query = gql(
+            """
+            query TagsByRegex($regex: String!) {
+              findTags(
+                tag_filter: {name: {value: $regex, modifier: MATCHES_REGEX}}
+                filter: {per_page: -1}
+              ) {
+                tags {
+                  id
+                  name
+                }
+              }
+            }
+            """
+        )
+        variables: Dict[str, object] = {"regex": regex}
+        response = self.execute(
+            query=query, operation_name="TagsByRegex", variables=variables, **kwargs
+        )
+        data = self.get_data(response)
+        return TagsByRegex.model_validate(data)

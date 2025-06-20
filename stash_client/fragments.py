@@ -13,6 +13,7 @@ class Img(BaseModel):
     urls: List[str]
     title: Optional[str]
     paths: "ImgPaths"
+    tags: List["ImgTags"]
     visual_files: List[
         Annotated[
             Union["ImgVisualFilesVideoFile", "ImgVisualFilesImageFile"],
@@ -25,6 +26,11 @@ class ImgPaths(BaseModel):
     image: Optional[str]
     thumbnail: Optional[str]
     preview: Optional[str]
+
+
+class ImgTags(BaseModel):
+    id: str
+    name: str
 
 
 class ImgVisualFilesVideoFile(BaseModel):

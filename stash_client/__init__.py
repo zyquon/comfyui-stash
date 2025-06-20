@@ -40,6 +40,7 @@ from .exceptions import (
 from .fragments import (
     Img,
     ImgPaths,
+    ImgTags,
     ImgVisualFilesImageFile,
     ImgVisualFilesImageFileFingerprints,
     ImgVisualFilesVideoFile,
@@ -53,6 +54,11 @@ from .images_by_search import (
     ImagesBySearch,
     ImagesBySearchFindImages,
     ImagesBySearchFindImagesImages,
+)
+from .images_by_tag_ids import (
+    ImagesByTagIds,
+    ImagesByTagIdsFindImages,
+    ImagesByTagIdsFindImagesImages,
 )
 from .input_types import (
     AddTempDLNAIPInput,
@@ -203,6 +209,7 @@ from .input_types import (
     TagUpdateInput,
     TimestampCriterionInput,
 )
+from .tags_by_regex import TagsByRegex, TagsByRegexFindTags, TagsByRegexFindTagsTags
 from .version import Version, VersionVersion
 
 __all__ = [
@@ -295,9 +302,13 @@ __all__ = [
     "ImagesBySearch",
     "ImagesBySearchFindImages",
     "ImagesBySearchFindImagesImages",
+    "ImagesByTagIds",
+    "ImagesByTagIdsFindImages",
+    "ImagesByTagIdsFindImagesImages",
     "ImagesDestroyInput",
     "Img",
     "ImgPaths",
+    "ImgTags",
     "ImgVisualFilesImageFile",
     "ImgVisualFilesImageFileFingerprints",
     "ImgVisualFilesVideoFile",
@@ -395,6 +406,9 @@ __all__ = [
     "TagDestroyInput",
     "TagFilterType",
     "TagUpdateInput",
+    "TagsByRegex",
+    "TagsByRegexFindTags",
+    "TagsByRegexFindTagsTags",
     "TagsMergeInput",
     "TimestampCriterionInput",
     "Upload",
