@@ -58,7 +58,7 @@ class StashNode:
 
         version = res.version.version
         return (self.stash, version)
-    
+
 class StashImage:
     """
     Get an image from Stash by ID, search string, URL in the UI. Results are ORed; use the offset to choose the image
@@ -67,14 +67,18 @@ class StashImage:
     CATEGORY = NODE_CATEGORY
     NAME = f'Stash Image'
 
-    RETURN_NAMES = ("IMAGE", 'count')
-    RETURN_TYPES = ("IMAGE", 'INT'  )
+    RETURN_NAMES = ("IMAGE", 'id' , 'count')
+    RETURN_TYPES = ("IMAGE", 'INT', 'INT'  )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             'required': {
                 'stash': ('STASH', {'tooltip': 'A Stash server connection'}),
+                'offset': ('INT', {
+                    'default': 0,
+                    'tooltip': 'Offset to use if the query returns more than one image (0 is the first image)',
+                }),
             },
             'optional': {
                 'id_or_url': ('STRING', {
@@ -85,24 +89,26 @@ class StashImage:
                     'default': '',
                     'tooltip': 'A search as when running in the Stash UI',
                 }),
-                # TODO: Maybe just say the name of your Stash saved search and it can pull that and DTRT.
-                'offset': ('INT', {
-                    'default': 0,
-                    'tooltip': 'Offset to use if the query returns more than one image (0 is the first image)',
+                'tags': ('STRING', {
+                    'default': '',
+                    'tooltip': 'One or more tags associated with the image, comma-separated',
                 }),
+                # TODO: Maybe just say the name of your Stash saved search and it can pull that and DTRT.
             }
         }
 
     FUNCTION = 'run'
-    def run(self, stash:Stash, id_or_url, search, offset):
+    def run(self, stash:Stash, offset, id_or_url, search, tags):
         empty = torch.empty((0, 0, 0, 3), dtype=torch.float32)
+
+        tags = self.split_commas(tags)
 
         id_ur_url = id_or_url.strip()
         match = re.search(r'^https?://.+/images/(\d+)', id_or_url)
         if match:
             ids = [match.group(1)]
         else:
-            ids = self.id_commas(id_ur_url)
+            ids = self.split_commas(id_or_url, isdigit=True)
 
         all_images = []
         if ids:
@@ -112,6 +118,10 @@ class StashImage:
         if search:
             print(f'Stash: Images by search: {search!r}')
             res = stash.images_by_search(q=search)
+            all_images += res.find_images.images
+        if tags:
+            tag_ids = self.get_tag_ids(stash, *tags)
+            res = stash.images_by_tag_ids(ids=tag_ids)
             all_images += res.find_images.images
 
         # De-dupe
@@ -134,6 +144,8 @@ class StashImage:
             return (empty, 0)
 
         print(f'- Process image: {stash_image.id}')
+
+        # Pull the image data.
         # TODO: A cheeky optimization would be to check if the image exist locally, maybe only if the API URL indicates a local host.
         url = stash_image.paths.image
         headers = stash.headers.copy()
@@ -168,19 +180,30 @@ class StashImage:
         else:
             output = comfy_images[0]
 
-        return (output, match_count)
-    
-    def id_commas(self, vals):
-        """Return a list of IDs from a comma-separated string."""
+        return (output, stash_image.id, match_count)
+
+    def get_tag_ids(self, stash, *tag_names):
+        tags_re = [ re.escape(tag_name.strip()) for tag_name in tag_names ]
+        tags_re = r'^' + r'|'.join(tags_re) + r'$'
+        res = stash.tags_by_regex(regex=tags_re)
+        tags = res.find_tags.tags
+        tag_ids = [ int(tag.id) for tag in tags ]
+        return tag_ids
+
+    def split_commas(self, vals, empty=False, isdigit=False):
+        """Return a list of IDs or values from a comma-separated string."""
         if isinstance(vals, str):
             vals = vals.split(',')
         if not isinstance(vals, list):
             raise ValueError(f'Expected a string or list of IDs, got {type(vals)}')
 
         vals = [ v.strip() for v in vals ]
-        vals = [ v for v in vals if v.isdigit() ]
+        if not empty:
+            vals = [ v for v in vals if v ]
+        if isdigit:
+            vals = [ v for v in vals if v.isdigit() ]
         return vals
-    
+
     # TODO, IS_CHANGED, maybe query for an etag or some checksum or timestamp of the image.
     # Remember this must return a value which will be compared to the previous return value, not a boolean.
     # @classmethod
