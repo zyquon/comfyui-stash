@@ -39,6 +39,13 @@ DisplayName = "ComfyUI Stash"
 Icon = ""
 includes = ["dist/"]
 
+[tool.ariadne-codegen]
+remote_schema_url = "http://fs.local:9999/graphql"
+remote_schema_headers = {"ApiKey" = "$STASH_API_KEY"}
+queries_path = "queries.graphql"
+target_package_name = "stash_client"
+client_name = "Stash"
+
 [tool.setuptools.package-data]
 "*" = ["*.*"]
 
