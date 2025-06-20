@@ -4,7 +4,7 @@ ComfyUI-Stash provides nodes for [ComfyUI][comfyui] to access content within [St
 
 These nodes let you easily use Stash content in your Comfy workflow.
 
-![Image by Tag](./doc/image-by-tag.png)
+![Image by Tag](./doc/image-search.png)
 
 ## Installing and Using
 
@@ -53,6 +53,7 @@ Inputs
 * *id_or_url* - Optional search by ID. You can paste the Stash web UI's URL for that image; the node will use the ID from within that URL. So if you see something in Stash that you like, just copy/paste it here. Or, you can just paste an ID here, or even a comma-separated list of IDs.
 * *search* - Optional search query, the same as the Stash *Search* bar in its web UI. This is useful for searching by filename or folder name.
 * *tags* - Optional tag names (comma-separated); upper-case and lower-case must match.
+* *offset* - Which image from the search results to use (0 is the first)
 
 Outputs
 
