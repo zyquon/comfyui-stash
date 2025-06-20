@@ -1,0 +1,66 @@
+# pyright: reportMissingImports=false
+import os
+import re
+import json
+
+from server import PromptServer
+
+EXTENSION_DIR = os.path.dirname(os.path.abspath(__file__))
+COMFYUI_DIR = os.path.dirname(os.path.dirname(EXTENSION_DIR))
+
+NAMESPACE = f'zyquon.ComfyUI-Stash'
+
+# Unfortunately, these are shared with the JS code not DRY, because it seems
+# that default values do not get written to the settings.json file, so Python needs to know them too.
+DEFAULT = {
+    'api_url': 'http://localhost:9999/graphql',
+}
+
+class Settings:
+    def __init__(self):
+        self.settings_filepath = None
+
+    def get_settings_filepath(self):
+        """Get the settings file path for the default user"""
+        if self.settings_filepath:
+            return self.settings_filepath
+
+        user_manager = PromptServer.instance.user_manager
+        users_dir = os.path.dirname(user_manager.get_users_file())
+        user_dirs = [ d for d in os.listdir(users_dir) if os.path.isdir(os.path.join(users_dir, d)) ]
+        if not user_dirs:
+            print(f"Create user directory: {user_dirs[0]!r}")
+            os.mkdir(user_dirs[0])
+            user_dirs[0] = os.path.join(COMFYUI_DIR, "user")
+
+        self.settings_filepath = os.path.join(users_dir, user_dirs[0], "comfy.settings.json")
+        return self.settings_filepath
+
+    def get_settings(self):
+        """Read the settings file"""
+        settings = None
+        filepath = self.get_settings_filepath()
+        try:
+            with open(filepath, "r") as file:
+                config = json.load(file)
+        except FileNotFoundError:
+            print(f'\033[34m- \033[93m[WARNING]: Settings file {filepath} not found\033[0m\n')
+            pass
+        except json.JSONDecodeError as e:
+            print(f'\033[34m- \033[93m[WARNING]: Error decoding JSON in settings file {filepath}: {e}\033[0m\n')
+            settings = None
+        else:
+            settings = DEFAULT.copy()
+            for key, value in config.items():
+                # Filter for only the settings relevant to this extension.
+                if key.startswith(f'{NAMESPACE}.'):
+                    new_key = key[len(NAMESPACE) + 1:]
+                    settings[new_key] = value
+        return settings
+
+    # @classmethod
+    # def id(cls, short_id):
+    #     """
+    #     Convert a short ID to a full ID by prepending the namespace.
+    #     """
+    #     return f'{NAMESPACE}.{short_id}'
