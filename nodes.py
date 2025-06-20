@@ -21,7 +21,7 @@ class StashNode:
     
     CATEGORY = "Stash"  # Node category
     TITLE = "Stash Connection"  # Node title
-    DESCRIPTION = "Connect to a Stash server"  # Node description
+    DESCRIPTION = "Connection to a Stash server"  # Node description
     
     def get_stash(self):
         print(f'{self.TITLE} node called get_stash()')
@@ -37,7 +37,7 @@ class StashImage:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "stash": ("STASH",),  # Input image
+                "stash": ("STASH",),  # Stash connection
             }
         }
     

@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-stash"
+description = "Stash nodes for ComfyUI"
+version = "1.0.0"
+license = "Apache 2"
+dependencies = ["Pillow>=9.0.0", "numpy>=1.21.0"]
+
+[project.urls]
+Repository = "https://github.com/zyquon/comfyui-stash"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "zyquon"
+DisplayName = "ComfyUI Stash"
+Icon = ""
