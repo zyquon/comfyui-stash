@@ -2,10 +2,18 @@ import os
 from PIL import Image
 import numpy as np
 
+from server import PromptServer
+
+from .settings import Settings
+
+NODE_CATEGORY = 'Stash'
+
 class StashNode:
     """
     A ComfyUI node for retrieving information from a Stash DB.
     """
+    CATEGORY = NODE_CATEGORY
+    NAME = f'Stash Server'
     
     # Define node's basic information
     @classmethod
@@ -17,15 +25,18 @@ class StashNode:
         }
     
     RETURN_TYPES = ("STASH",)  # Output a string
-    FUNCTION = "get_stash"  # Processing function name
-    
-    CATEGORY = "Stash"  # Node category
-    TITLE = "Stash Connection"  # Node title
-    DESCRIPTION = "Connection to a Stash server"  # Node description
-    
-    def get_stash(self):
-        print(f'{self.TITLE} node called get_stash()')
+    DESCRIPTION = "Connection to a Stash server. This is a required input for all other Stash nodes."
 
+    def __init__(self):
+        self.stash = None
+    
+    FUNCTION = 'get_stash'
+    def get_stash(self):
+        settings = Settings().get_settings()
+        api_url = settings.get('api_url')
+        api_key = settings.get('api_key')
+        print(f'API is {api_url} with Key: {api_key!r}')
+        # PromptServer.instance.send_sync("zyquon.ComfyUI-Stash.textmessage", {"message":f"Hello world for this thing"})
         return (f'Hello, Stash world', ) # Must be a tuple
 
 class StashImage:
