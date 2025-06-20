@@ -24,12 +24,12 @@ class StashNode:
     CATEGORY = NODE_CATEGORY
     NAME = f'Stash Server'
 
+    RETURN_NAMES = ("STASH", 'version')
+    RETURN_TYPES = ("STASH", 'STRING' )
+
     @classmethod
     def INPUT_TYPES(cls):
         return { "required":{} }
-
-    RETURN_NAMES = ("STASH", 'version')
-    RETURN_TYPES = ("STASH", 'STRING' )
 
     def __init__(self):
         self.stash = None
@@ -67,6 +67,9 @@ class StashImage:
     CATEGORY = NODE_CATEGORY
     NAME = f'Stash Image'
 
+    RETURN_NAMES = ("IMAGE", 'count')
+    RETURN_TYPES = ("IMAGE", 'INT'  )
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -89,9 +92,6 @@ class StashImage:
                 }),
             }
         }
-
-    RETURN_NAMES = ("IMAGE", 'count')
-    RETURN_TYPES = ("IMAGE", 'INT'  )
 
     FUNCTION = 'run'
     def run(self, stash:Stash, id_or_url, search, offset):
