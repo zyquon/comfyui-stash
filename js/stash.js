@@ -8,8 +8,6 @@ const DEFAULT = {
   'api_url': `http://localhost:9999/graphql`,
 }
 
-debugger
-
 app.registerExtension({
   name: `${NAMESPACE}`,
 
