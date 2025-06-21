@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ComfyUI-Stash"
-version = "0.0.1"
+version = "1.0.0"
 description = "Stash nodes for ComfyUI"
 authors = [
   {name = "Zyqu Onrel", email = "zyquonrel@gmail.com"}
@@ -38,7 +38,6 @@ Repository = "https://github.com/zyquon/comfyui-stash" # Used by Comfy Registry
 PublisherId = "zyquon"
 DisplayName = "ComfyUI Stash"
 Icon = ""
-includes = ["dist/"]
 
 [tool.ariadne-codegen]
 remote_schema_url = "http://fs.local:9999/graphql"
