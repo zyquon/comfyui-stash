@@ -8,7 +8,7 @@ from server import PromptServer
 EXTENSION_DIR = os.path.dirname(os.path.abspath(__file__))
 COMFYUI_DIR = os.path.dirname(os.path.dirname(EXTENSION_DIR))
 
-NAMESPACE = f'zyquon.ComfyUI-Stash'
+DEFAULT_NAMESPACE = f'zyquon.ComfyUI-Stash'
 
 # Unfortunately, these are shared with the JS code not DRY, because it seems
 # that default values do not get written to the settings.json file, so Python needs to know them too.
@@ -17,8 +17,9 @@ DEFAULT = {
 }
 
 class Settings:
-    def __init__(self):
+    def __init__(self, namespace=DEFAULT_NAMESPACE):
         self.settings_filepath = None
+        self.namespace = namespace
 
     def get_settings_filepath(self):
         """Get the settings file path for the default user"""
@@ -44,23 +45,16 @@ class Settings:
             with open(filepath, "r") as file:
                 config = json.load(file)
         except FileNotFoundError:
-            print(f'\033[34m- \033[93m[WARNING]: Settings file {filepath} not found\033[0m\n')
+            print(f'WARNING Settings file not found: {filepath!r}')
             pass
         except json.JSONDecodeError as e:
-            print(f'\033[34m- \033[93m[WARNING]: Error decoding JSON in settings file {filepath}: {e}\033[0m\n')
+            print(f'ERROR decoding JSON in settings file {filepath!r}: {e}')
             settings = None
         else:
             settings = DEFAULT.copy()
             for key, value in config.items():
-                # Filter for only the settings relevant to this extension.
-                if key.startswith(f'{NAMESPACE}.'):
-                    new_key = key[len(NAMESPACE) + 1:]
+                # Filter for only the settings relevant to this extension, and strip the namespace prefix.
+                if key.startswith(f'{self.namespace}.'):
+                    new_key = key[len(self.namespace) + 1:]
                     settings[new_key] = value
         return settings
-
-    # @classmethod
-    # def id(cls, short_id):
-    #     """
-    #     Convert a short ID to a full ID by prepending the namespace.
-    #     """
-    #     return f'{NAMESPACE}.{short_id}'
