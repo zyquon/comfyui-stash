@@ -99,6 +99,8 @@ class StashImage:
 
     FUNCTION = 'run'
     def run(self, stash:Stash, offset, id_or_url, search, tags):
+        # TODO I think this is incorrect. Returning None did not work but returning this empty tensor just
+        # triggers an exception like no such index 0 from the IMAGE consumer node.
         empty = torch.empty((0, 0, 0, 3), dtype=torch.float32)
 
         tags = self.split_commas(tags)
@@ -120,6 +122,7 @@ class StashImage:
             res = stash.images_by_search(q=search)
             all_images += res.find_images.images
         if tags:
+            print(f'Stash: Images by tags: {tags!r}')
             tag_ids = self.get_tag_ids(stash, *tags)
             res = stash.images_by_tag_ids(ids=tag_ids)
             all_images += res.find_images.images
@@ -143,7 +146,7 @@ class StashImage:
             print(f'Stash: WARNING Offset {offset} is out of bounds for {len(stash_images)} images')
             return (empty, 0)
 
-        print(f'- Process image: {stash_image.id}')
+        print(f'Stash: found image: {stash_image.id}')
 
         # Pull the image data.
         # TODO: A cheeky optimization would be to check if the image exist locally, maybe only if the API URL indicates a local host.
