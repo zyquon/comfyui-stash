@@ -1,9 +1,0 @@
-{
-    "your_node_name": {
-        "title": "Your Node Title",
-        "description": "A brief description of your node",
-        "tags": ["image", "utility"],
-        "repository": "github_username/repository_name",
-        "install_type": "git_clone"
-    }
-}
